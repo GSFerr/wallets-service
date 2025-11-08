@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://prod-db:5432/wallets_prod
+    username: prod_user
+    password: prod_secure_pass
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+kafka:
+  bootstrap-servers: kafka-prod:9092
+
+logging:
+  level:
+    root: WARN
+    br.com.walletservice: INFO

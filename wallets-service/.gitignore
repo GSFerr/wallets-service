@@ -1,0 +1,95 @@
+# =======================================
+# 📦 Maven / Java / Spring Boot
+# =======================================
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.mvn/
+*.class
+*.jar
+*.war
+*.ear
+dependency-reduced-pom.xml
+
+# =======================================
+# ☕ IDEs (IntelliJ, VSCode, STS, NetBeans)
+# =======================================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Spring Tool Suite / Eclipse
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans/
+.sts4-cache/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# VS Code
+.vscode/
+
+# =======================================
+# 🧰 OS-specific and editor temp files
+# =======================================
+.DS_Store
+Thumbs.db
+*.swp
+*~
+*.bak
+*.tmp
+*.orig
+
+# =======================================
+# 🐘 Flyway & Database
+# =======================================
+flyway.conf
+flyway_schema_history/
+# Nunca versionar dumps locais
+*.sql.dump
+*.sql.bak
+
+# =======================================
+# 🔐 Environment / Secrets / Configs locais
+# =======================================
+*.env
+.env.*
+application-*.yml.local
+application-local.yml
+application-test.yml
+secrets/
+*.key
+*.pem
+*.crt
+
+# =======================================
+# 🐳 Docker / Build
+# =======================================
+docker-compose.override.yml
+*.pid
+logs/
+*.log
+*.pid.lock
+.tmp/
+
+# =======================================
+# 📁 Node / Front-end (caso o projeto tenha UI)
+# =======================================
+node_modules/
+dist/
