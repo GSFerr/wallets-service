@@ -1,0 +1,119 @@
+# 🏦 Wallets Service
+
+A microservice responsible for managing user wallets — enabling **deposits, withdrawals, transfers**, and **balance history queries** with full **traceability**, **idempotency**, and **auditability**.
+This project was designed for production-grade environments where financial consistency and uptime are critical.
+
+---
+
+## 🚀 Overview
+
+The **Wallets Service** is part of a digital payments ecosystem.
+It provides APIs for:
+- Creating wallets for users
+- Querying current and historical balances
+- Performing deposits, withdrawals, and peer-to-peer transfers
+- Maintaining a complete immutable ledger for all transactions
+
+This implementation follows **DDD**, **Clean Architecture**, and **SOLID principles** to ensure separation of concerns, scalability, and traceability.
+
+---
+
+## ⚙️ Tech Stack
+
+| Category              | Technology                          | Purpose |
+|------------------------|--------------------------------------|----------|
+| Language              | Java 21                              | Modern LTS version with improved virtual threads and records |
+| Framework             | Spring Boot 3.5.x                    | Application framework and dependency management |
+| Persistence           | Spring Data JPA + PostgreSQL         | Data access layer and relational storage |
+| Migrations            | Flyway                               | Schema version control and reproducible environments |
+| Messaging (future)    | Kafka                                | Asynchronous events for inter-service communication |
+| Caching (future)      | Redis                                | Performance optimization for read-heavy queries |
+| Testing               | JUnit 5 + Testcontainers             | Integration and unit testing in isolated environments |
+| Build tool            | Maven                                | Dependency and lifecycle management |
+| Observability         | Spring Boot Actuator                 | Health checks and metrics for monitoring |
+
+---
+
+## 🧩 Domain Model
+
+Core entities designed for financial consistency and auditability:
+
+| Entity | Description |
+|---------|-------------|
+| **Wallet** | Represents a user's balance in a given currency. Contains materialized balance for fast reads. |
+| **LedgerEntry** | Append-only ledger storing all financial operations (deposit, withdraw, transfer). Supports idempotency and correlation tracking. |
+| **WalletTransaction** | Represents higher-level transaction context (grouping multiple ledger entries). |
+| **Auditable (Base Class)** | Provides `createdAt`, `updatedAt`, and actor tracking for full traceability. |
+
+All balance-changing operations are executed **atomically and transactionally** using pessimistic locks to ensure consistency under concurrent access.
+
+---
+
+## 🧮 Functional Requirements
+
+- **Create Wallet**: Register a wallet for a specific user and currency.
+- **Deposit Funds**: Add money to a wallet.
+- **Withdraw Funds**: Remove money, ensuring sufficient balance.
+- **Transfer Funds**: Move funds between wallets atomically.
+- **Retrieve Balance**: Get the current balance.
+- **Retrieve Historical Balance**: Query the balance at a specific point in time.
+- **Full Auditability**: Every operation leaves a complete trace in the ledger.
+
+---
+
+## 🔐 Non-Functional Requirements
+
+- **High Availability**: Downtime directly impacts financial operations.
+- **Strong Consistency**: Double-entry and idempotent operations.
+- **Traceability**: Every transaction carries `correlationId` and `idempotencyKey`.
+- **Observability**: Metrics, logs, and health endpoints are exposed via Actuator.
+- **Extensibility**: Easily integrates with external services (users, payments, notifications).
+
+---
+
+## 🗂️ Project Structure
+
+
+---
+
+## 🧠 Design Decisions
+
+| Area | Choice | Justification |
+|------|---------|----------------|
+| **Language & Version** | Java 21 | LTS version with modern performance features and virtual threads for scalability |
+| **Persistence Strategy** | PostgreSQL + JPA | Strong ACID guarantees and mature ecosystem |
+| **Schema Versioning** | Flyway | Deterministic migrations and rollback capability |
+| **Locking** | Pessimistic locking | Prevents race conditions in high-concurrency environments |
+| **Ledger Design** | Append-only immutable | Full financial traceability and audit compliance |
+| **Testing** | Testcontainers | Reproducible and isolated tests matching production environments |
+| **Resilience** | Idempotency and correlation IDs | Prevents double processing in case of retries |
+
+---
+
+## 🧰 How to Run Locally
+
+### Prerequisites
+- Java 21+
+- Maven 3.9+
+- Docker (for PostgreSQL + Testcontainers)
+
+### Steps
+
+```bash
+# Clone the repository
+git clone git@github.com:GSFerr/wallets-service.git
+cd wallets-service
+
+# Run PostgreSQL container (example)
+docker run --name wallet-postgres -e POSTGRES_DB=wallet_db \
+    -e POSTGRES_USER=wallet_user -e POSTGRES_PASSWORD=wallet_pass \
+    -p 5432:5432 -d postgres:16
+
+# Run migrations
+mvn flyway:migrate
+
+# Start the application
+mvn spring-boot:run
+
+The service will start at:
+➡️ http://localhost:8080

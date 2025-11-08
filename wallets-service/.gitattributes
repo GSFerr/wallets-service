@@ -1,2 +1,83 @@
-/mvnw text eol=lf
-*.cmd text eol=crlf
+# =======================================
+# 🌍 Geral — Normalização de texto
+# =======================================
+# Garante consistência de fim de linha entre Windows/Linux/Mac
+* text=auto eol=lf
+
+# =======================================
+# ☕ Arquivos Java / Spring Boot
+# =======================================
+*.java        text diff=java
+*.xml         text diff=xml
+*.yml         text diff=yaml
+*.yaml        text diff=yaml
+*.properties  text diff=java
+*.gradle      text diff=java
+pom.xml       text diff=xml
+
+# =======================================
+# 🐘 Flyway SQL scripts
+# =======================================
+*.sql         text diff=sql
+
+# =======================================
+# 🐳 Docker / CI / Infra
+# =======================================
+*.sh          text eol=lf
+*.bash        text eol=lf
+Dockerfile    text diff=dockerfile
+*.yml         text diff=yaml
+
+# =======================================
+# 🧰 Arquivos de configuração e documentação
+# =======================================
+*.md          text diff=markdown
+*.adoc        text diff=asciidoc
+*.json        text diff=json
+*.csv         text
+*.txt         text
+
+# =======================================
+# 🧱 Binários e arquivos que não devem ser alterados pelo Git
+# =======================================
+*.jar         binary
+*.war         binary
+*.zip         binary
+*.tar.gz      binary
+*.png         binary
+*.jpg         binary
+*.jpeg        binary
+*.gif         binary
+*.ico         binary
+*.pdf         binary
+*.p12         binary
+*.pem         binary
+*.crt         binary
+*.key         binary
+
+# =======================================
+# 🧩 IDE / Ferramentas de build
+# =======================================
+*.iml         text
+*.ipr         text
+*.iws         text
+.idea/**      text
+.vscode/**    text
+.settings/**  text
+
+# =======================================
+# 🚀 Configuração de merges automáticos
+# =======================================
+# Prefira merges automáticos em arquivos simples de texto
+*.md          merge=union
+*.yml         merge=union
+*.properties  merge=union
+
+# =======================================
+# 🔍 Linguagens para GitHub Linguist
+# =======================================
+# Força reconhecimento de linguagens corretas para estatísticas no GitHub
+*.java linguist-language=Java
+*.yml  linguist-language=YAML
+*.sql  linguist-language=SQL
+
