@@ -1,6 +1,7 @@
 # 🏦 Wallets Service
 
-A microservice responsible for managing user wallets — enabling **deposits, withdrawals, transfers**, and **balance history queries** with full **traceability**, **idempotency**, and **auditability**.
+A microservice responsible for managing user wallets — enabling **deposits, withdrawals, transfers**, 
+and **balance history queries** with full **traceability**, **idempotency**, and **auditability**.
 This project was designed for production-grade environments where financial consistency and uptime are critical.
 
 ---
@@ -14,23 +15,24 @@ It provides APIs for:
 - Performing deposits, withdrawals, and peer-to-peer transfers
 - Maintaining a complete immutable ledger for all transactions
 
-This implementation follows **DDD**, **Clean Architecture**, and **SOLID principles** to ensure separation of concerns, scalability, and traceability.
+This implementation follows **DDD**, **Clean Architecture**, and **SOLID principles** to ensure separation of concerns, 
+scalability, and traceability.
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Category              | Technology                          | Purpose |
-|------------------------|--------------------------------------|----------|
-| Language              | Java 21                              | Modern LTS version with improved virtual threads and records |
-| Framework             | Spring Boot 3.5.x                    | Application framework and dependency management |
-| Persistence           | Spring Data JPA + PostgreSQL         | Data access layer and relational storage |
-| Migrations            | Flyway                               | Schema version control and reproducible environments |
-| Messaging (future)    | Kafka                                | Asynchronous events for inter-service communication |
-| Caching (future)      | Redis                                | Performance optimization for read-heavy queries |
-| Testing               | JUnit 5 + Testcontainers             | Integration and unit testing in isolated environments |
-| Build tool            | Maven                                | Dependency and lifecycle management |
-| Observability         | Spring Boot Actuator                 | Health checks and metrics for monitoring |
+| Category              | Technology                   | Purpose |
+|------------------------|------------------------------|----------|
+| Language              | Java 21                      | Modern LTS version with improved virtual threads and records |
+| Framework             | Spring Boot 3.5.6            | Application framework and dependency management |
+| Persistence           | Spring Data JPA + PostgreSQL | Data access layer and relational storage |
+| Migrations            | Flyway                       | Schema version control and reproducible environments |
+| Messaging (future)    | Kafka                        | Asynchronous events for inter-service communication |
+| Caching (future)      | Redis                        | Performance optimization for read-heavy queries |
+| Testing               | JUnit 5 + Testcontainers     | Integration and unit testing in isolated environments |
+| Build tool            | Maven                        | Dependency and lifecycle management |
+| Observability         | Spring Boot Actuator         | Health checks and metrics for monitoring |
 
 ---
 
