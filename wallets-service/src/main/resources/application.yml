@@ -5,17 +5,15 @@ spring:
   application:
     name: wallets-service
 
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
 
   datasource:
     url: jdbc:postgresql://localhost:5432/wallet_db
-    username: wallet_user
-    password: wallet_pass
+    username: postgres
+    password: Pos@2025app
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: true
+      ddl-auto: create-drop
+      properties:
+        hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
