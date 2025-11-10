@@ -5,7 +5,8 @@ import br.com.walletservice.wallets_service.enums.CurrencyType;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,11 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class WalletResponseDTO {
-    private Long id;
-    private Long userId;
+    private UUID id;
+    private UUID userId;
     private CurrencyType currency;
     private BigDecimal balance;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
 }
 
