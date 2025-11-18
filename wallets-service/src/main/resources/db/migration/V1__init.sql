@@ -75,3 +75,15 @@ COMMENT ON TABLE wallet_transactions IS 'Tracks higher-level operations (e.g. tr
 -- INITIAL DATA SEED (OPTIONAL)
 -- ==============================
 -- INSERT INTO wallets (id, user_id, currency, balance) VALUES (gen_random_uuid(), '00000000-0000-0000-0000-000000000001', 'BRL', 0);
+
+CREATE TABLE IF NOT EXISTS wallet_event_log (
+  id uuid PRIMARY KEY,
+  event_type varchar(128) NOT NULL,
+  payload text NOT NULL,
+  correlation_id varchar(128) NOT NULL,
+  event_timestamp timestamp without time zone NOT NULL,
+  processed boolean NOT NULL DEFAULT false,
+  processed_at timestamp without time zone,
+  created_at timestamp without time zone NOT NULL DEFAULT now(),
+  CONSTRAINT uk_wallet_event_log_correlation UNIQUE (correlation_id)
+);
