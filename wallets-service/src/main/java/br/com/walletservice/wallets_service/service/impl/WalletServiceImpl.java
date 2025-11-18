@@ -4,14 +4,17 @@ import br.com.walletservice.wallets_service.domain.Wallet;
 import br.com.walletservice.wallets_service.dto.request.WalletRequestDTO;
 import br.com.walletservice.wallets_service.dto.response.WalletResponseDTO;
 import br.com.walletservice.wallets_service.enums.CurrencyType;
+import br.com.walletservice.wallets_service.event.WalletCreatedEvent;
 import br.com.walletservice.wallets_service.exception.DuplicateWalletException;
 import br.com.walletservice.wallets_service.repository.WalletRepository;
 import br.com.walletservice.wallets_service.service.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -19,14 +22,19 @@ import java.util.UUID;
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
+    /**
+     * Creates a new wallet for the given user and currency.
+     * Publishes a Kafka event only after successful DB commit.
+     */
     @Override
     @Transactional
     public WalletResponseDTO createWallet(WalletRequestDTO request) {
         UUID userId = request.getUserId();
         CurrencyType currency = request.getCurrency();
 
-        // Business rule: prevent duplicate wallets for the same user & currency
+        // 🔒 Business rule: prevent duplicate wallets for same user & currency
         boolean exists = walletRepository.existsByUserIdAndCurrency(userId, currency);
         if (exists) {
             throw new DuplicateWalletException(
@@ -34,7 +42,7 @@ public class WalletServiceImpl implements WalletService {
             );
         }
 
-        // Create and persist new wallet
+        // 💾 Create and persist new wallet
         Wallet wallet = Wallet.builder()
                 .id(UUID.randomUUID())
                 .userId(userId)
@@ -44,7 +52,18 @@ public class WalletServiceImpl implements WalletService {
 
         Wallet savedWallet = walletRepository.save(wallet);
 
-        // Return DTO
+        // 📡 Publish domain event (captured post-commit)
+        WalletCreatedEvent event = WalletCreatedEvent.builder()
+                .walletId(savedWallet.getId())
+                .userId(savedWallet.getUserId())
+                .currency(savedWallet.getCurrency().name())
+                .occurredAt(Instant.now())
+                .correlationId(UUID.randomUUID().toString())
+                .build();
+
+        eventPublisher.publishEvent(event);
+
+        // 🎯 Return DTO
         return WalletResponseDTO.builder()
                 .id(savedWallet.getId())
                 .userId(savedWallet.getUserId())

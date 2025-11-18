@@ -1,17 +1,18 @@
 package br.com.walletservice.wallets_service;
 
-
 import br.com.walletservice.wallets_service.domain.Wallet;
-import br.com.walletservice.wallets_service.service.impl.WalletServiceImpl;
 import br.com.walletservice.wallets_service.dto.request.WalletRequestDTO;
 import br.com.walletservice.wallets_service.dto.response.WalletResponseDTO;
 import br.com.walletservice.wallets_service.enums.CurrencyType;
+import br.com.walletservice.wallets_service.event.WalletCreatedEvent;
 import br.com.walletservice.wallets_service.exception.DuplicateWalletException;
 import br.com.walletservice.wallets_service.repository.WalletRepository;
+import br.com.walletservice.wallets_service.service.impl.WalletServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
@@ -25,6 +26,9 @@ class WalletServiceImplTest {
 
     @Mock
     private WalletRepository walletRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private WalletServiceImpl walletService;
@@ -43,8 +47,8 @@ class WalletServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should create wallet successfully when not exists")
-    void shouldCreateWalletSuccessfully() {
+    @DisplayName("Should create wallet successfully and publish event when not exists")
+    void shouldCreateWalletSuccessfullyAndPublishEvent() {
         // given
         when(walletRepository.existsByUserIdAndCurrency(userId, CurrencyType.BRL)).thenReturn(false);
 
@@ -66,8 +70,20 @@ class WalletServiceImplTest {
         assertThat(response.getCurrency()).isEqualTo(CurrencyType.BRL);
         assertThat(response.getBalance()).isEqualByComparingTo("0.00");
 
+        // verify repository behavior
         verify(walletRepository, times(1)).existsByUserIdAndCurrency(userId, CurrencyType.BRL);
         verify(walletRepository, times(1)).save(any(Wallet.class));
+
+        // verify event publishing
+        ArgumentCaptor<WalletCreatedEvent> eventCaptor = ArgumentCaptor.forClass(WalletCreatedEvent.class);
+        verify(eventPublisher, times(1)).publishEvent(eventCaptor.capture());
+
+        WalletCreatedEvent event = eventCaptor.getValue();
+        assertThat(event).isNotNull();
+        assertThat(event.getWalletId()).isEqualTo(savedWallet.getId());
+        assertThat(event.getUserId()).isEqualTo(savedWallet.getUserId());
+        assertThat(event.getCurrency()).isEqualTo(savedWallet.getCurrency().name());
+        assertThat(event.getCorrelationId()).isNotBlank();
     }
 
     @Test
@@ -82,6 +98,7 @@ class WalletServiceImplTest {
                 .hasMessageContaining("Wallet already exists for user");
 
         verify(walletRepository, never()).save(any(Wallet.class));
+        verify(eventPublisher, never()).publishEvent(any());
     }
 
     @Test
@@ -96,6 +113,6 @@ class WalletServiceImplTest {
                 .isInstanceOf(DataIntegrityViolationException.class);
 
         verify(walletRepository, times(1)).save(any(Wallet.class));
+        verify(eventPublisher, never()).publishEvent(any());
     }
 }
-
